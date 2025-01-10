@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:my_app/model/user.dart';
+import 'package:my_app/models/user.dart';
+import 'package:my_app/viewmodels/user_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class CreateUserPage extends HookWidget {
-  final void Function(ValueNotifier<User>) onAddUser;
-
   const CreateUserPage({
     super.key,
-    required this.onAddUser,
   });
 
   @override
@@ -107,12 +106,18 @@ class CreateUserPage extends HookWidget {
                 ),
                 const SizedBox(height: 32),
                 Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      onAddUser(user);
-                      Navigator.pop(context);
+                  child: Consumer<UserViewmodel>(
+                    builder: (context, userViewmodel, child) {
+                      final users = userViewmodel.users;
+
+                      return ElevatedButton(
+                        onPressed: () {
+                          userViewmodel.saveUsers([...users, user.value]);
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Add new user'),
+                      );
                     },
-                    child: const Text('Sign Up'),
                   ),
                 ),
               ],
